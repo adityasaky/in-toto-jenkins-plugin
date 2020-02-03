@@ -19,7 +19,7 @@ import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.GenericUrl;
 
 
-public class Grafeas extends Transport {
+public class Grafeas extends GenericCRUD {
 
     URI uri;
     GrafeasOccurrence occurrence;
@@ -75,34 +75,35 @@ public class Grafeas extends Transport {
 
         URIBuilder uriBuilder = new URIBuilder();
 
-        String destination = "";
+        URI destination = new URI();
 
         try {
             destination = uriBuilder
                 .setScheme(scheme)
                 .setHost(authority)
                 .setPath(path)
-                .build()
-                .toString();
+                .build();
+                // .toString();
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
 
         // FIXME: Shamelessly copied from GenericCRUD.java
-        try {
-            HttpRequest request = new NetHttpTransport()
-                .createRequestFactory()
-                .buildPostRequest(new GenericUrl(destination),
-                    ByteArrayContent.fromString("application/x-www-form-uriencoded",
-                        jsonString));
-            HttpResponse response = request.execute();
-            System.out.println(response.parseAsString());
+        // try {
+        //     HttpRequest request = new NetHttpTransport()
+        //         .createRequestFactory()
+        //         .buildPostRequest(new GenericUrl(destination),
+        //             ByteArrayContent.fromString("application/x-www-form-uriencoded",
+        //                 jsonString));
+        //     HttpResponse response = request.execute();
+        //     System.out.println(response.parseAsString());
 
-            /* FIXME: should handle error codes and other situations more appropriately,
-             * but this gets the job done for a PoC
-             */
-        } catch (IOException e) {
-            throw new RuntimeException("couldn't serialize to HTTP server: " + e);
-        }
+        //     /* FIXME: should handle error codes and other situations more appropriately,
+        //      * but this gets the job done for a PoC
+        //      */
+        // } catch (IOException e) {
+        //     throw new RuntimeException("couldn't serialize to HTTP server: " + e);
+        // }
+        this.sendRequest(destination, jsonString);
     }
 }

@@ -20,17 +20,13 @@ public class GenericCRUD extends Transport {
 
     URI uri;
 
-    public GenericCRUD(URI uri) {
-        this.uri = uri;
-    }
-
-    public void submit(Link link) {
+    public void sendRequest(URI uri, String metadata) {
         try {
             HttpRequest request = new NetHttpTransport()
                 .createRequestFactory()
-                .buildPostRequest(new GenericUrl(this.uri),
+                .buildPostRequest(new GenericUrl(uri),
                     ByteArrayContent.fromString("application/x-www-form-uriencoded",
-                        link.dumpString()));
+                        metadata));
             HttpResponse response = request.execute();
             System.out.println(response.parseAsString());
 
@@ -40,6 +36,28 @@ public class GenericCRUD extends Transport {
         } catch (IOException e) {
             throw new RuntimeException("couldn't serialize to HTTP server: " + e);
         }
+    }
 
+    public GenericCRUD(URI uri) {
+        this.uri = uri;
+    }
+
+    public void submit(Link link) {
+        // try {
+        //     HttpRequest request = new NetHttpTransport()
+        //         .createRequestFactory()
+        //         .buildPostRequest(new GenericUrl(this.uri),
+        //             ByteArrayContent.fromString("application/x-www-form-uriencoded",
+        //                 link.dumpString()));
+        //     HttpResponse response = request.execute();
+        //     System.out.println(response.parseAsString());
+
+        //     /* FIXME: should handle error codes and other situations more appropriately,
+        //      * but this gets the job done for a PoC
+        //      */
+        // } catch (IOException e) {
+        //     throw new RuntimeException("couldn't serialize to HTTP server: " + e);
+        // }
+        this.sendRequest(this.uri, link.dumpString());
     }
 }
